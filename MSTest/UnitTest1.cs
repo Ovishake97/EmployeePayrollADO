@@ -25,5 +25,27 @@ namespace MSTest
             actual.Add("Terisa");
             expected.Equals(actual);
         }
+        /// Test case for checking average salary of male employees
+        [TestMethod]
+        public void GivenQueryGetsAverageSalary() {
+            int expectedOutput = employee.GetSalary(@"select avg(basic_pay) from employee_payroll where Gender = 'M'");
+            int actualOutput = 470449;
+            expectedOutput.Equals(actualOutput);
+        }
+        /// Test case for checking total salary of female employees
+        [TestMethod]
+        public void GivenQueryGetsTotalSalary() {
+            int expectedOutput = employee.GetSalary(@"select sum(basic_pay) from employee_payroll where Gender='F'");
+            int actualOutput = 73348;
+            expectedOutput.Equals(actualOutput);
+        }
+        /// Test case for checking maximum salary from the male employees
+        [TestMethod]
+        public void GivenQueryGetsMaximumSalary() {
+            int expectedOutput = employee.GetSalary(@"select max(basic_pay) from employee_payroll where Gender='M'");
+            int actualOutput = 494949;
+            expectedOutput.Equals(actualOutput);
+
+        }
     }
 }
