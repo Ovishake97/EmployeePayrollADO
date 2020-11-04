@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PayrollServiceADO
 {
@@ -7,7 +8,13 @@ namespace PayrollServiceADO
         static void Main(string[] args)
         {
             EmployeeRepository repository = new EmployeeRepository();
-             repository.GetAllEmployees();
+            List<string> models = new List<string>();
+                models=  repository.GetEmployeesJoiningAfterADate();
+            foreach(var element in models)
+            {
+                Console.WriteLine(element);
+            }
+            
         }
     }
 }
