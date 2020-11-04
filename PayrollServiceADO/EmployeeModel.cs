@@ -12,7 +12,7 @@ namespace PayrollServiceADO
         public string Address { get; set; }
         public string Department { get; set; }
         public string Gender { get; set; }
-        public double BasicPay { get; set; }
+        public int BasicPay { get; set; }
         public double Deductions { get; set; }
         public double TaxablePay { get; set; }
         public double IncomeTax { get; set; }
