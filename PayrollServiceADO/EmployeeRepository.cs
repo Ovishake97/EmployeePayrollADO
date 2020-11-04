@@ -119,12 +119,43 @@ namespace PayrollServiceADO
                     {
                         throw new Exception("No data found");
                     }
-                    
-
                 }
             }
             catch (Exception ex)
             {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
+        /// This method is to be used to check minimum,maximum,average and total salary
+        /// of both male and female employees by passing the query as a parameter
+        public int GetSalary(string query) {
+            int number = 0;
+            try
+            {
+                using (connection) {
+                    SqlCommand command = new SqlCommand(query, connection);
+                    this.connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            number = reader.GetInt32(0);
+                        }
+                        reader.Close();
+                        return number;
+                    }
+                    else {
+                        throw new Exception("Invalid query");
+                    }
+
+                }
+            }
+            catch (Exception ex) {
                 throw new Exception(ex.Message);
             }
             finally
