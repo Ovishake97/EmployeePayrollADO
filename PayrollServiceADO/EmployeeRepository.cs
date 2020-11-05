@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -86,6 +87,114 @@ namespace PayrollServiceADO
               
             }
         }
-        
+        /// Ability to show the employees joined after a particular date
+        /// as asked in UC5
+        public List<string> GetEmployeesJoiningAfterADate()
+        {
+            EmployeeModel model = new EmployeeModel();
+            List<string> results = new List<string>();
+            try
+            {
+                using (connection)
+                {
+                    string query = @"select * from employee_payroll where start_date between cast('2018-1-1' as date) and convert(date,getdate())";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    this.connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            model.EmployeeID = reader.GetInt32(0);
+                            model.EmployeeName = reader.GetString(1);
+                            model.BasicPay = reader.GetInt32(2);
+                            model.StartDate = reader.GetDateTime(3);
+                            model.Gender = reader.GetString(4);
+                            model.PhoneNumber = reader.GetInt32(5);
+                            model.Address = reader.GetString(6);
+                            model.Department = reader.GetString(7);
+                            model.Deductions = reader.GetDouble(8);
+                            model.TaxablePay = reader.GetDouble(9);
+                            model.NetPay = reader.GetDouble(10);
+                            model.IncomeTax = reader.GetDouble(11);
+                            Console.WriteLine("\n");
+                            results.Add(model.EmployeeName);
+                        }
+                        reader.Close();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("No data found");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
+        /// This method is to be used to check minimum,maximum,average and total salary
+        /// of both male and female employees by passing the query as a parameter
+        public int GetSalary(string query)
+        {
+            int number = 0;
+            try
+            {
+                using (connection)
+                {
+                    SqlCommand command = new SqlCommand(query, connection);
+                    this.connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            number = reader.GetInt32(0);
+                        }
+                        reader.Close();
+                        return number;
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid query");
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
+        /// Adding values to the normalised employee table
+        /// by passing EmployeeDetails object as parameter
+        public void AddEmployee(EmployeeDetails employee) {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand("dbo.AddEmployee", this.connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@id", employee.employeeID);
+                    command.Parameters.AddWithValue("@name", employee.employeeName);
+                    command.Parameters.AddWithValue("@start_date", employee.startDate);
+                    command.Parameters.AddWithValue("@gender", employee.gender);
+                    Console.WriteLine("Added sucessfully");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }
