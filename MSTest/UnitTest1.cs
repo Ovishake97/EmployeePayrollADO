@@ -47,5 +47,10 @@ namespace MSTest
             expectedOutput.Equals(actualOutput);
 
         }
+        [TestMethod]
+        public void GivenQueryUpdatesRows() {
+            bool expectedOutput = employee.UpdateTables();
+            Assert.IsTrue(expectedOutput);
+        }
     }
 }

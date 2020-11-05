@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -61,7 +62,7 @@ namespace PayrollServiceADO
         }
         /// Method to update the employee table 
         /// as asked in the UC 3
-        public void UpdateTables()
+        public bool UpdateTables()
         {
             using (connection)
             {
@@ -71,10 +72,17 @@ namespace PayrollServiceADO
                     // Enlist a command in the current transaction.
                     SqlCommand command = connection.CreateCommand();
                     command.CommandText = "update employee_payroll set Basic_Pay = 40000 where name='Terisa'";
-                 command.ExecuteNonQuery();
+                int numberOfEffectedRows= command.ExecuteNonQuery();
+                    if (numberOfEffectedRows != 0)
+                    {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
                 }
                 catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
+                    throw new Exception(ex.Message);
                 }
               
             }
@@ -132,11 +140,13 @@ namespace PayrollServiceADO
         }
         /// This method is to be used to check minimum,maximum,average and total salary
         /// of both male and female employees by passing the query as a parameter
-        public int GetSalary(string query) {
+        public int GetSalary(string query)
+        {
             int number = 0;
             try
             {
-                using (connection) {
+                using (connection)
+                {
                     SqlCommand command = new SqlCommand(query, connection);
                     this.connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
@@ -149,18 +159,41 @@ namespace PayrollServiceADO
                         reader.Close();
                         return number;
                     }
-                    else {
+                    else
+                    {
                         throw new Exception("Invalid query");
                     }
 
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message);
             }
             finally
             {
                 this.connection.Close();
+            }
+        }
+        /// Adding values to the normalised employee table
+        /// by passing EmployeeDetails object as parameter
+        public void AddEmployee(EmployeeDetails employee) {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand("dbo.AddEmployee", this.connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@id", employee.employeeID);
+                    command.Parameters.AddWithValue("@name", employee.employeeName);
+                    command.Parameters.AddWithValue("@start_date", employee.startDate);
+                    command.Parameters.AddWithValue("@gender", employee.gender);
+                    Console.WriteLine("Added sucessfully");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }
