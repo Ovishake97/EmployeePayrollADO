@@ -10,7 +10,8 @@ namespace PayrollServiceADO
     {
         public static string connectionString = "Server=(localdb)\\MSSQLLocalDB; Initial Catalog =payroll_service; User ID = AkSharma; Password=abhishek123";
         public SqlConnection connection = new SqlConnection(connectionString);
-
+        /// Method defined to add values to the normalised salary table 
+        /// by passing SalaryModel object as parameter
         public void AddSalary(SalaryModel salary) {
             try
             {
